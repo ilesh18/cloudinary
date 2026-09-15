@@ -17,9 +17,9 @@ A general-purpose, high-performance smart media transformation and distribution 
 
 | Resource | Link | Note |
 | :--- | :--- | :--- |
-| **Live Application** | [cloudinary-coral.vercel.app/] | *Submission Placeholder* |
+| **Live Application** | [(cloudinary-coral.vercel.app)] | *Submission Placeholder* |
 | **Demo Video (2–4 min)** | `[ADD 2–4 MIN DEMO VIDEO URL]` | *Submission Placeholder* |
-| **Official GitHub Repo** | [HackIndiaXYZ/pixels-to-products-cloudinary-ai-hackathon-2026-origin](https://github.com/HackIndiaXYZ/pixels-to-products-cloudinary-ai-hackathon-2026-origin) | Main submission branch |
+| **Official GitHub Repo** | [(https://github.com/ilesh18/cloudinary)] | Main submission branch |
 
 ---
 

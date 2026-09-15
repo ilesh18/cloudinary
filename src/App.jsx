@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute, PublicOnlyRoute } from './components/layout/ProtectedRoute';
 import AppLayout from './layouts/AppLayout';
 
+import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
@@ -20,6 +21,9 @@ export default function App() {
     <BrowserRouter>
       <AuthProvider>
         <Routes>
+          {/* Public Landing Page */}
+          <Route path="/" element={<Landing />} />
+
           {/* Public Share Route */}
           <Route path="/share/:shareToken" element={<ShareProduct />} />
 
@@ -49,7 +53,7 @@ export default function App() {
               </ProtectedRoute>
             }
           >
-            <Route path="/" element={<Dashboard />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/upload" element={<UploadProduct />} />
             <Route path="/processing" element={<Processing />} />
             <Route path="/products" element={<ProductsList />} />

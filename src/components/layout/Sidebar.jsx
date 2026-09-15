@@ -41,7 +41,7 @@ export default function Sidebar({ mobileOpen, setMobileOpen }) {
   };
 
   const navItems = [
-    { label: 'Dashboard', path: '/', icon: Package },
+    { label: 'Dashboard', path: '/dashboard', icon: Package },
     { label: 'Generated Content', path: '/products', icon: Grid },
     { label: 'Media Library', path: '/assets', icon: Image },
     { label: 'Content Factory', path: '/social-factory', icon: Sparkles },

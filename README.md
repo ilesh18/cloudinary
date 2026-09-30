@@ -9,7 +9,15 @@
 [![Express Server](https://img.shields.io/badge/Backend-Node.js_%2F_Express_5-green.svg)](https://nodejs.org)
 [![React Frontend](https://img.shields.io/badge/Frontend-React_19_%2F_Vite_8-cyan.svg)](https://react.dev)
 
-A general-purpose, high-performance smart media transformation and distribution engine for creators, marketers, photographers, and sellers. Upload **one master image** to instantly generate, optimize, and organize platform-ready visual formats for Social Media, Web Banners, Profiles, and Commerce listings.
+A general-purpose smart media transformation and distribution engine for creators, marketers, photographers, sellers, and digital teams.
+
+Upload one master image or video to generate, optimize, organize, and deliver platform-ready media across Social Media, Web, Profiles, Commerce, and video workflows.
+
+The product combines three connected capabilities:
+
+- **Image Media Factory** — one image into destination-specific visual formats.
+- **Video Pipeline** — one source video into platform-ready MP4 variants.
+- **Content Generation** — turn an existing visual asset into shareable motion content.
 
 ---
 
@@ -29,7 +37,13 @@ A general-purpose, high-performance smart media transformation and distribution 
 
 Submitted to **Track 1 — AI Media Pipelines** for the **Pixels to Products — Cloudinary AI Hackathon 2026**.
 
-**Smart Media Content Factory** uses Cloudinary not as a passive file store, but as an active, programmatic media processing engine. Images uploaded to the platform undergo automated ingestion signal analysis, background removal, content-aware reframing, preset-driven derived transformations, responsive `f_auto,q_auto` delivery, and context-indexed search.
+**Smart Media Content Factory** uses Cloudinary not as a passive file store, but as an active, programmatic media processing engine.
+
+Images uploaded to the platform undergo automated ingestion signal analysis, background removal, content-aware reframing, preset-driven derived transformations, responsive `f_auto,q_auto` delivery, and context-indexed search.
+
+Videos are handled as Cloudinary video resources and can be transformed into platform-ready MP4 variants.
+
+The platform also includes a content-generation workflow that uses an existing visual asset as the starting point for creating shareable motion content.
 
 ---
 
@@ -42,50 +56,187 @@ Visual distribution across modern digital platforms is highly repetitive and tim
 - A single photo must be manually re-cropped for Instagram Posts (1:1), Stories (9:16), YouTube (16:9), Web Banners (1920x600), and Profile Avatars.
 - Naive center cropping accidentally cuts off critical focal subjects like faces, logos, or products.
 - Removing backgrounds or maintaining disjointed asset folders wastes hours and storage quota.
+- A single video often needs different dimensions and delivery formats for different platforms.
+- Turning an existing image into a polished social video can require additional editing tools and manual work.
 
 ### The Solution
 
 **Upload once. Deliver everywhere.**
 
-The platform ingests one high-resolution source file and instantly projects it into destination-specific variants across four core categories:
+The platform ingests one master media asset and routes it through the appropriate processing pipeline.
+
+For image media, the platform generates destination-specific variants across four core categories:
 
 1. **SOCIAL**: Instagram Post, Instagram Portrait, Instagram Story / TikTok, YouTube Thumbnail, Social Square, Social Landscape.
 2. **WEB**: Website Desktop Hero Banner, Website Mobile Banner.
 3. **PERSONAL**: Profile Avatar / Thumbnail.
 4. **COMMERCE**: Marketplace Square, Store Catalog, Product Thumbnail, Transparent Cutout PNG.
 
+For video media, the Video Pipeline generates platform-ready MP4 variants.
+
+For content generation, an existing visual asset can be transformed into shareable motion content without requiring the user to manually build the complete video from scratch.
+
 ---
 
 ## Two-Branch Composition Architecture
 
-Smart Media Content Factory intelligently branches its composition strategy based on media type:
+Smart Media Content Factory intelligently branches its image composition strategy based on media type:
 
 ```text
-                       UPLOADED MASTER MEDIA
+                       UPLOADED MASTER IMAGE
                                   │
                     CLOUDINARY INGESTION & ANALYSIS
                                   │
-                 ┌────────────────┴────────────────┐
-                 │                                 │
-    PRODUCT / OBJECT MEDIA               GENERAL / LIFESTYLE PHOTO
-                 │                                 │
-   Cloudinary Background Removal        Cloudinary Content-Aware Crop
-         (effect: 'background_removal')            (gravity: 'auto')
-                 │                                 │
-    Cutout Layered Composition           Preserved Focal Subjects
-   (c_fit + c_lpad + b_rgb/white)       (f_auto, q_auto Reframing)
-                 │                                 │
-                 └────────────────┬────────────────┘
+                  ┌───────────────┴────────────────┐
+                  │                                │
+      PRODUCT / OBJECT MEDIA             GENERAL / LIFESTYLE PHOTO
+                  │                                │
+      Cloudinary Background Removal        Cloudinary Content-Aware Crop
+                  │                                │
+       Cutout Layered Composition           Preserved Focal Subjects
+                  │                                │
+      (c_fit + c_lpad + b_rgb/white)       (f_auto, q_auto Reframing)
+                  │                                │
+                  └───────────────┬────────────────┘
                                   ▼
-                      PLATFORM-READY TARGET FORMAT
+                       PLATFORM-READY TARGET FORMAT
 ```
 
-- **Product / Object Branch**: Extracts object cutouts with Cloudinary `effect: 'background_removal'` and composes them inside padded canvas boundaries (`c_fit` + `c_lpad`) to prevent subject clipping.
-- **Lifestyle / Photography Branch**: Employs content-aware gravity (`gravity: 'auto'`) on the raw scene to intelligently reframe focal subjects without losing contextual backgrounds.
+### Product / Object Branch
+
+Extracts object cutouts with Cloudinary:
+
+```text
+effect: 'background_removal'
+```
+
+and composes them inside padded canvas boundaries using:
+
+```text
+c_fit
+c_lpad
+b_rgb / white
+```
+
+This helps prevent important subjects from being clipped during destination-specific transformations.
+
+### Lifestyle / Photography Branch
+
+Uses Cloudinary content-aware gravity:
+
+```text
+gravity: 'auto'
+```
+
+to intelligently reframe important subjects while preserving the surrounding context of the original image.
 
 ---
 
-## Supported Preset Formats
+# Video Pipeline
+
+The Video Pipeline handles source videos independently from the image-processing pipeline.
+
+The original video is preserved while Cloudinary generates platform-specific video variants.
+
+## Video Pipeline Architecture
+
+```text
+                         UPLOADED VIDEO
+                              │
+                              ▼
+                    CLOUDINARY VIDEO RESOURCE
+                              │
+                              ▼
+                    VIDEO TRANSFORMATIONS
+                              │
+             ┌────────────────┼────────────────┐
+             │                │                │
+             ▼                ▼                ▼
+        REELS / SHORTS      SQUARE          YOUTUBE
+        1080 × 1920       1080 × 1080      1920 × 1080
+             │                │                │
+             └────────────────┼────────────────┘
+                              ▼
+                     EXPLICIT MP4 DELIVERY
+                              │
+                    ┌─────────┴─────────┐
+                    ▼                   ▼
+                OPEN VIDEO          DOWNLOAD
+```
+
+### Supported Video Variants
+
+| Platform | Dimensions | Aspect Ratio | Output |
+| :--- | :--- | :--- | :--- |
+| **Reels / Shorts** | `1080 × 1920` | `9:16` | `mp4` |
+| **Square Video** | `1080 × 1080` | `1:1` | `mp4` |
+| **YouTube / Landscape** | `1920 × 1080` | `16:9` | `mp4` |
+
+### Video Processing
+
+The source video can remain in its original format, including:
+
+```text
+MOV
+MP4
+```
+
+Cloudinary is responsible for the actual video transformation and MP4 delivery.
+
+The platform does not simply rename the source file from `.mov` to `.mp4`.
+
+Instead, the pipeline requests an actual MP4 representation through Cloudinary's video transformation and delivery system.
+
+### Video Delivery
+
+Explicit MP4 variants are generated for the platform-specific outputs.
+
+The resulting assets can be:
+
+- Opened directly in the browser.
+- Downloaded as MP4.
+- Shared through their generated delivery URLs.
+- Stored and referenced through the application's media workflow.
+
+---
+
+# Content Generation
+
+Content Generation is the second major media workflow of the application.
+
+Instead of starting with a blank video editor, the workflow starts with an existing visual asset.
+
+## Content Generation Flow
+
+```text
+                         EXISTING IMAGE
+                              │
+                              ▼
+                       CONTENT PURPOSE
+                              │
+                              ▼
+                    CONTENT GENERATION
+                              │
+                              ▼
+                     MOTION / COMPOSITION
+                              │
+                              ▼
+                       SOCIAL-READY VIDEO
+                              │
+                    ┌─────────┴─────────┐
+                    ▼                   ▼
+                 OPEN                DOWNLOAD
+```
+
+The goal is to reduce the work required to turn an existing visual asset into a finished piece of shareable motion content.
+
+The workflow is designed around the principle:
+
+> **Start with the media you already have, then turn it into content ready for distribution.**
+
+---
+
+# Supported Image Preset Formats
 
 | Category | Format Preset Name | Dimensions | Composition Strategy | Output Format |
 | :--- | :--- | :--- | :--- | :--- |
@@ -105,11 +256,11 @@ Smart Media Content Factory intelligently branches its composition strategy base
 
 ---
 
-## Key Features & Implementation Matrix
+# Key Features & Implementation Matrix
 
 | Feature | Description | Technical Implementation |
 | :--- | :--- | :--- |
-| **Stream Upload** | Ingests high-resolution master images with metadata | `cloudinary.uploader.upload_stream` |
+| **Stream Upload** | Ingests high-resolution master media with metadata | `cloudinary.uploader.upload_stream` |
 | **Signal Analysis** | Generates color palettes, quality scores, & watermark detection | `colors: true`, `quality_analysis`, `accessibility_analysis` |
 | **Background Removal** | Server-side subject isolation without canvas manipulation | `effect: 'background_removal'` |
 | **Smart Cropping** | Focal preservation for lifestyle/nature photos | `gravity: 'auto'` |
@@ -118,14 +269,17 @@ Smart Media Content Factory intelligently branches its composition strategy base
 | **Asset Search API** | Real-time cross-catalog search using tags and context | `cloudinary.search.expression()` API |
 | **ZIP Package Download** | Packages master and derived assets into structured ZIP archives | `JSZip` stream bundling |
 | **Public Showcases** | Generates shareable public token URLs for external review | Token resolution mapping to Cloudinary URLs |
+| **Video Pipeline** | Converts source videos into platform-ready explicit MP4 variants | Cloudinary video transformations and MP4 delivery |
+| **Content Generation** | Turns an existing visual asset into shareable motion content | Content-generation workflow integrated with the media workspace |
 | **Firebase Auth & Security** | Strict ownership checks and token verification on API routes | Firebase Admin SDK (`verifyIdToken`) |
 
 ---
 
-## System Architecture
+# System Architecture
 
 ```mermaid
 flowchart TD
+
     subgraph Client["React 19 + Vite 8 Client"]
         UI["User Interface Component"]
         AuthContext["Firebase Auth Context"]
@@ -144,6 +298,7 @@ flowchart TD
         AnalysisAI["Colors & Quality Signals"]
         BgRemoval["Background Removal Engine"]
         SmartCrop["Content-Aware Gravity Engine"]
+        VideoPipeline["Video Transformation / MP4 Delivery"]
         SearchAPI["Search API Index"]
         CDN["Optimized CDN Delivery"]
     end
@@ -155,8 +310,10 @@ flowchart TD
 
     UI --> AuthContext
     AuthContext --> FirebaseAuth
+
     UI --> APIService
     APIService -->|"Bearer ID Token"| Router
+
     Router --> AuthMiddleware
     AuthMiddleware --> FirestoreConfig
     Router --> CloudinaryService
@@ -165,25 +322,56 @@ flowchart TD
     UploadAPI --> AnalysisAI
     UploadAPI --> BgRemoval
     UploadAPI --> SmartCrop
+    CloudinaryService --> VideoPipeline
     CloudinaryService --> SearchAPI
     CloudinaryService --> CDN
 
     FirestoreConfig --> Firestore
+
     Router -->|"Delivery URLs & Metadata"| APIService
 ```
 
 ---
 
-## Tech Stack
+# Tech Stack
 
-- **Frontend**: React 19, Vite 8, Tailwind CSS 4, Lucide React, React Router DOM v7.
-- **Backend**: Node.js, Express 5, Multer, JSZip.
-- **Media**: Cloudinary SDK v2, Upload Stream, Search API, Transformations.
-- **Database & Auth**: Firebase Authentication, Cloud Firestore, Firebase Admin SDK.
+### Frontend
+
+- React 19
+- Vite 8
+- Tailwind CSS 4
+- Lucide React
+- React Router DOM v7
+
+### Backend
+
+- Node.js
+- Express 5
+- Multer
+- JSZip
+
+### Media Infrastructure
+
+- Cloudinary SDK v2
+- Cloudinary Upload API
+- Cloudinary Upload Stream
+- Cloudinary Search API
+- Cloudinary Image Transformations
+- Cloudinary Video Transformations
+- Cloudinary CDN
+- `f_auto`
+- `q_auto`
+- Explicit MP4 delivery
+
+### Database & Authentication
+
+- Firebase Authentication
+- Cloud Firestore
+- Firebase Admin SDK
 
 ---
 
-## Repository Structure
+# Repository Structure
 
 ```text
 cloudinary/
@@ -217,17 +405,19 @@ cloudinary/
 
 ---
 
-## Quickstart & Local Setup
+# Quickstart & Local Setup
 
-### 1. Prerequisites
+## 1. Prerequisites
 
 - **Node.js**: v18+
 - **Cloudinary Account**: Cloud Name, API Key, API Secret
 - **Firebase Project**: Email/Password Authentication and Firestore
 
-### 2. Environment Variables Setup
+---
 
-#### Server `.env`
+## 2. Environment Variables Setup
+
+### Server `.env`
 
 Create:
 
@@ -250,7 +440,7 @@ FIREBASE_CLIENT_EMAIL=your_client_email
 FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nYOUR_KEY\n-----END PRIVATE KEY-----\n"
 ```
 
-#### Client `.env`
+### Client `.env`
 
 Create:
 
@@ -273,7 +463,9 @@ VITE_API_URL=http://localhost:5000
 
 Never commit `.env` files or real credentials.
 
-### 3. Installation & Start
+---
+
+## 3. Installation & Start
 
 ```bash
 # Clone the repository
@@ -300,64 +492,156 @@ The frontend runs on the Vite development server and the backend runs on the con
 
 ---
 
-## Hackathon Verification Guide
+# Hackathon Verification Guide
 
 Judges can verify Cloudinary integration directly inside the Cloudinary Dashboard.
 
-1. **Uploaded media**: Check the Cloudinary Media Library for uploaded assets.
-2. **Metadata and tags**: Inspect uploaded media for associated metadata, tags, and analysis results where available.
-3. **Derived assets**: Inspect generated transformations and derived assets to verify that Cloudinary is performing the transformations.
-4. **Search**: Verify that indexed metadata and generated assets can be searched through the application's Cloudinary Search integration.
-5. **Delivery**: Open generated assets and inspect the Cloudinary delivery URLs and transformation parameters.
+### 1. Uploaded Media
+
+Check the Cloudinary Media Library for uploaded assets.
+
+Verify that:
+
+- Images are stored as image resources.
+- Videos are stored as video resources.
+- Original media remains preserved.
+
+### 2. Metadata and Tags
+
+Inspect uploaded media for associated:
+
+- Metadata
+- Tags
+- Analysis results
+- Context information
+
+where available.
+
+### 3. Image Derived Assets
+
+Inspect generated image transformations to verify that Cloudinary is performing:
+
+- Resizing
+- Cropping
+- Content-aware transformations
+- Background removal
+- Format optimization
+
+### 4. Video Variants
+
+Upload a source video and inspect the generated variants:
+
+- Reels / Shorts — `1080 × 1920`
+- Square — `1080 × 1080`
+- YouTube — `1920 × 1080`
+
+The platform variants are delivered as explicit MP4 outputs.
+
+### 5. Search
+
+Verify that indexed metadata and generated assets can be searched through the application's Cloudinary Search integration.
+
+### 6. Delivery
+
+Open generated assets and inspect their Cloudinary delivery URLs and transformation parameters.
 
 ---
 
-## Cloudinary Integration
+# Cloudinary Integration
 
 Cloudinary is the core media engine of the application.
 
-### Upload
+## Upload
 
 Original media is uploaded through the Cloudinary Upload API using server-side processing.
 
-### AI Analysis
+For images, the application uses Cloudinary image resources.
+
+For videos, the application uses Cloudinary video resources.
+
+The original source remains preserved.
+
+---
+
+## AI Analysis
 
 Where enabled and available, the application uses Cloudinary's media analysis capabilities for information such as:
 
 - AI-generated tags
-- image quality signals
-- color information
-- watermark detection
-- image/content classification
-- other supported analysis metadata
+- Image quality signals
+- Color information
+- Watermark detection
+- Image/content classification
+- Other supported analysis metadata
 
 Only results actually returned by Cloudinary are persisted and displayed.
 
-### Background Removal
+---
+
+## Background Removal
 
 Cloudinary performs background removal on supported media.
 
 The original image remains unchanged, while a processed representation can be used for product/object-focused compositions.
 
-### Smart Cropping
+---
+
+## Smart Cropping
 
 Cloudinary intelligent/content-aware cropping is used for media formats where preserving the important subject is more useful than a basic center crop.
 
-### Transformations
+The platform uses:
+
+```text
+gravity: 'auto'
+```
+
+where appropriate.
+
+---
+
+## Video Processing
+
+Video uploads are handled as Cloudinary video resources.
+
+The Video Pipeline preserves the original source and generates explicit MP4 variants:
+
+```text
+Reels / Shorts
+1080 × 1920
+
+Square
+1080 × 1080
+
+YouTube / Landscape
+1920 × 1080
+```
+
+The explicit MP4 variants use Cloudinary video transformations and MP4 delivery rather than simply renaming the source file.
+
+A `.mov` source can therefore be transformed into a playable `.mp4` delivery variant without requiring the user to manually convert the original video first.
+
+---
+
+## Transformations
 
 Destination-specific media variants are generated with Cloudinary transformations rather than client-side pixel manipulation.
 
 Examples include:
 
-- resizing
-- cropping
-- content-aware gravity
-- product cutout composition
-- padding
-- layering
-- background/underlay composition
+- Resizing
+- Cropping
+- Content-aware gravity
+- Product cutout composition
+- Padding
+- Layering
+- Background/underlay composition
+- Video reframing
+- Video format conversion
 
-### Optimized Delivery
+---
+
+## Optimized Delivery
 
 Generated media uses Cloudinary optimized delivery where appropriate:
 
@@ -366,31 +650,39 @@ f_auto
 q_auto
 ```
 
-This allows Cloudinary to select an appropriate delivery format and quality for the requesting device.
+This allows Cloudinary to select an appropriate delivery format and quality for supported image/web workflows.
 
-### Search
+For explicit platform video variants, the application requests MP4 delivery instead of relying on automatic image-format selection.
+
+---
+
+## Search
 
 The application uses Cloudinary Search to find generated assets using indexed media information, tags, and associated metadata.
 
-### Metadata
+The Search API allows the Media Library to retrieve and filter real Cloudinary assets rather than relying on mock data.
+
+---
+
+## Metadata
 
 Firestore stores the application-level relationships between:
 
-- users
-- source media
-- generated assets
-- asset type
-- platform
-- processing state
+- Users
+- Source media
+- Generated assets
+- Asset type
+- Platform
+- Processing state
 
 Cloudinary remains responsible for the actual media.
 
 ---
 
-## End-to-End Workflow
+# End-to-End Workflow
 
 ```text
-User uploads media
+User uploads image or video
         ↓
 Firebase-authenticated request
         ↓
@@ -398,73 +690,140 @@ Express backend
         ↓
 Cloudinary upload
         ↓
-Cloudinary analysis
-        ↓
-Background removal / smart processing
-        ↓
-Destination-specific transformations
-        ↓
-f_auto + q_auto
-        ↓
-Firestore metadata
-        ↓
-Media Library
-        ↓
-Search / Preview / Download / Share
+Media-type-specific processing
+        │
+        ├── IMAGE
+        │     ↓
+        │   Cloudinary analysis
+        │     ↓
+        │   Background removal / smart crop
+        │     ↓
+        │   Destination-specific image transformations
+        │
+        └── VIDEO
+              ↓
+            Cloudinary video resource
+              ↓
+            Video transformations
+              ↓
+            Explicit MP4 variants
+              ↓
+              └──────────────┐
+                             ▼
+                    Generated Cloudinary Assets
+                             ↓
+                    Optimized Cloudinary Delivery
+                             ↓
+                       Firestore Metadata
+                             ↓
+                        Media Library
+                             ↓
+                 Search / Open / Download / Share
+                             ↓
+                 Content Generation when requested
 ```
 
 ---
 
-## How It Works
+# How It Works
 
-### 1. Upload Once
+## 1. Upload Once
 
-The user uploads one master image.
+The user uploads one master image or video.
 
-### 2. Analyze
-
-Cloudinary analyzes the uploaded media and returns available tags, visual signals, or other configured analysis information.
-
-### 3. Choose the Destination
-
-The user can generate formats for:
-
-- Social
-- Web
-- Personal
-- Commerce
-
-### 4. Transform
-
-Cloudinary generates the requested destination-specific variants.
-
-### 5. Optimize
-
-The generated content is delivered through optimized Cloudinary transformations.
-
-### 6. Organize
-
-Firestore stores the relationship between the user, source media, and generated assets.
-
-### 7. Search and Reuse
-
-The user can search, preview, download, regenerate, and share generated assets.
+The original media is preserved.
 
 ---
 
-## Security & Data Isolation
+## 2. Analyze
+
+Cloudinary analyzes supported image media and returns available:
+
+- Tags
+- Visual signals
+- Color information
+- Quality information
+- Other configured analysis results
+
+---
+
+## 3. Choose the Workflow
+
+The user can work with:
+
+- Image destination formats
+- Video platform variants
+- Content generation
+
+---
+
+## 4. Transform
+
+Cloudinary generates the requested destination-specific image or video variants.
+
+---
+
+## 5. Optimize
+
+Generated media is delivered through Cloudinary's optimized delivery mechanisms.
+
+For image/web workflows:
+
+```text
+f_auto
+q_auto
+```
+
+For platform video outputs:
+
+```text
+MP4
+```
+
+is explicitly requested.
+
+---
+
+## 6. Organize
+
+Firestore stores the relationship between:
+
+- Authenticated user
+- Source media
+- Generated assets
+- Asset type
+- Platform
+- Processing state
+
+---
+
+## 7. Search and Reuse
+
+The user can:
+
+- Search assets
+- Open generated media
+- Download individual assets
+- Download generated packages
+- Regenerate assets
+- Share generated assets
+
+---
+
+# Security & Data Isolation
 
 - **Server-Side Credentials**: Cloudinary API secrets and Firebase Admin credentials remain server-side.
 - **Token Verification**: Protected Express routes verify Firebase Authentication ID tokens.
 - **Ownership Checks**: API operations verify that the authenticated user owns the requested media.
 - **Firestore Rules**: Firestore security rules isolate private user data by authenticated UID.
 - **No Secret Frontend Exposure**: Server-only credentials are never placed in `VITE_` frontend variables.
+- **Original Media Preservation**: Processing creates derived outputs without replacing the original source.
 
 ---
 
-## Testing
+# Testing
 
-### Basic Workflow
+## Basic Workflow
 
 1. Create an account.
 2. Log in.
@@ -474,23 +833,62 @@ The user can search, preview, download, regenerate, and share generated assets.
 6. Confirm available AI/media analysis results appear.
 7. Generate destination formats.
 8. Open generated assets.
-9. Search the media library.
+9. Search the Media Library.
 10. Download an individual asset.
 11. Download all available assets.
 12. Generate a share link and open it.
 
-### Media Types
+---
+
+## Image Testing
 
 Test the application with:
 
 - Product images
 - Portrait photographs
 - Landscape photographs
-- Event or general photographs
+- Event photographs
+- General photographs
 
 Verify that the composition strategy preserves the important visual subject for each type.
 
-### Security
+---
+
+## Video Pipeline Testing
+
+Test with:
+
+- `.mov`
+- `.mp4`
+
+Verify that:
+
+1. The source video uploads successfully.
+2. Cloudinary recognizes it as a video resource.
+3. The original video remains preserved.
+4. Reels output is generated as playable MP4.
+5. Square output is generated as playable MP4.
+6. YouTube output is generated as playable MP4.
+7. Generated MP4 URLs open directly in a browser.
+8. Generated videos can be downloaded.
+9. The source does not need to be manually converted before processing.
+10. The generated output dimensions match the requested platform preset.
+
+---
+
+## Content Generation Testing
+
+Verify that:
+
+1. An existing visual asset can enter the content-generation workflow.
+2. The selected content-generation workflow starts successfully.
+3. Generated motion content is associated with the source asset.
+4. Generated content can be opened when generation completes.
+5. Generated content can be downloaded when available.
+
+---
+
+## Security Testing
 
 Verify that:
 
@@ -499,12 +897,13 @@ Verify that:
 - User A cannot regenerate User B's assets.
 - User A cannot delete User B's products or media.
 - Share links expose only intentionally shared content.
+- Cloudinary API secrets are never exposed to the frontend.
 
 ---
 
-## Deployment
+# Deployment
 
-### Frontend
+## Frontend
 
 The frontend can be deployed to Vercel.
 
@@ -523,7 +922,9 @@ Frontend environment variable:
 VITE_API_URL=https://your-render-backend.onrender.com
 ```
 
-### Backend
+---
+
+## Backend
 
 The Express backend can be deployed to Render.
 
@@ -554,21 +955,27 @@ Never place backend secrets in frontend environment variables.
 
 ---
 
-## Hackathon Requirements
+# Hackathon Requirements
 
 The project is built for the **Pixels to Products — Cloudinary AI Hackathon 2026**.
 
-### Cloudinary
+## Cloudinary
 
 - Cloudinary is an active part of the product.
-- Media is uploaded through Cloudinary.
+- Image and video media are uploaded through Cloudinary.
 - Media is analyzed through Cloudinary where supported.
-- Media is transformed through Cloudinary.
+- Image media is transformed through Cloudinary.
+- Video media is transformed through Cloudinary.
+- Videos are delivered as platform-ready MP4 variants.
 - Generated assets are delivered through Cloudinary.
 - Cloudinary Search is used for asset discovery.
-- `f_auto` and `q_auto` are used for optimized delivery.
+- `f_auto` and `q_auto` are used for optimized image/web delivery where appropriate.
+- Explicit MP4 delivery is used for platform video variants.
+- Cloudinary acts as the application's media processing and delivery infrastructure.
 
-### Submission Materials
+---
+
+## Submission Materials
 
 | Requirement | Status |
 | :--- | :--- |
@@ -580,22 +987,24 @@ The project is built for the **Pixels to Products — Cloudinary AI Hackathon 20
 
 ---
 
-## Future Improvements
+# Future Improvements
 
 Potential future extensions include:
 
-- richer video pipelines
-- additional platform presets
-- batch media processing
-- advanced collaborative asset management
-- more sophisticated composition strategies
-- expanded delivery workflows
+- Richer video editing controls
+- Additional platform presets
+- Batch media processing
+- Advanced collaborative asset management
+- More sophisticated composition strategies
+- Expanded delivery workflows
+- Broader content-generation controls
+- Additional media automation workflows
 
 These are future improvements and are not required for the current implementation.
 
 ---
 
-## Acknowledgements
+# Acknowledgements
 
 Built for the **Pixels to Products — Cloudinary AI Hackathon 2026**.
 
@@ -604,4 +1013,4 @@ Built for the **Pixels to Products — Cloudinary AI Hackathon 2026**.
 
 ---
 
-*Smart Media Content Factory — "One upload. Every format."*
+> **Smart Media Content Factory — One upload. Every format.**
